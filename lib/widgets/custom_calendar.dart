@@ -54,7 +54,7 @@ class CustomCalendar extends StatelessWidget {
               Text(
                 details.date.day.toString(),
                 style: const TextStyle(
-                  color: Colors.black,
+                  color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -67,10 +67,22 @@ class CustomCalendar extends StatelessWidget {
         textStyle: TextStyle(
           fontSize: 20.0,
           fontWeight: FontWeight.bold,
-          color: Colors.black,
+          color: Colors.white,
+        ),
+        backgroundColor: Colors.black
+      ),
+      backgroundColor: Colors.black,
+      viewHeaderStyle: const ViewHeaderStyle(
+        backgroundColor: Colors.black,
+        dateTextStyle: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
         ),
       ),
-      backgroundColor: Colors.white,
+      monthViewSettings: const MonthViewSettings(
+        showAgenda: false,
+        appointmentDisplayMode: MonthAppointmentDisplayMode.none,
+      ),
     );
   }
 

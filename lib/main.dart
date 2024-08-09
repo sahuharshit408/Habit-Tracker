@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
       child: GetMaterialApp(
         title: 'Habit Tracker',
         theme: appTheme,
-        home: AuthWrapper(), // Use AuthWrapper to manage routing based on auth state
+        home: const AuthWrapper(), // Use AuthWrapper to manage routing based on auth state
         getPages: appRoutes,
       ),
     );

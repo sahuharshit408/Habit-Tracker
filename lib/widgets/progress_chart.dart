@@ -9,24 +9,21 @@ class ProgressChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Create a map to store the count of completions (1 or 0) for each habit
     final Map<String, int> habitCompletionCounts = {};
 
     for (var habit in habits) {
-      // Count the habit as 1 if completed, otherwise 0
       habitCompletionCounts[habit.title] = habit.isCompleted ? 1 : 0;
     }
 
-    // Convert map to list of MapEntry
     final List<MapEntry<String, int>> dataEntries = habitCompletionCounts.entries.toList();
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Colors.black,
         borderRadius: BorderRadius.circular(16),
         boxShadow: const [
           BoxShadow(
-            color: Colors.black12,
+            color: Colors.black26,
             blurRadius: 10,
             offset: Offset(0, 5),
           ),
@@ -34,7 +31,7 @@ class ProgressChart extends StatelessWidget {
       ),
       padding: const EdgeInsets.all(16),
       child: Column(
-        mainAxisSize: MainAxisSize.min, // Ensures the column doesn't take up infinite height
+        mainAxisSize: MainAxisSize.min,
         children: [
           const Text(
             'Habit Progress Overview',
@@ -52,7 +49,7 @@ class ProgressChart extends StatelessWidget {
                 textStyle: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+                  color: Colors.white,
                 ),
               ),
               legend: const Legend(
@@ -61,7 +58,7 @@ class ProgressChart extends StatelessWidget {
                 position: LegendPosition.bottom,
                 textStyle: TextStyle(
                   fontSize: 14,
-                  color: Colors.black54,
+                  color: Colors.white70,
                 ),
               ),
               tooltipBehavior: TooltipBehavior(enable: true),
@@ -70,7 +67,7 @@ class ProgressChart extends StatelessWidget {
                   text: 'Habits',
                   textStyle: TextStyle(
                     fontSize: 14,
-                    color: Colors.black54,
+                    color: Colors.white70,
                   ),
                 ),
               ),
@@ -82,7 +79,7 @@ class ProgressChart extends StatelessWidget {
                   text: 'Completion Status',
                   textStyle: TextStyle(
                     fontSize: 14,
-                    color: Colors.black54,
+                    color: Colors.white70,
                   ),
                 ),
               ),
@@ -95,7 +92,7 @@ class ProgressChart extends StatelessWidget {
                     isVisible: true,
                     textStyle: TextStyle(
                       fontSize: 14,
-                      color: Colors.black,
+                      color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

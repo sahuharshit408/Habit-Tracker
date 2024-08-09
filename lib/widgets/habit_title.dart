@@ -6,13 +6,12 @@ import '../providers/habit_provider.dart';
 class HabitTile extends StatelessWidget {
   final Habit habit;
 
-  const HabitTile({required this.habit, Key? key}) : super(key: key);
+  const HabitTile({required this.habit, super.key});
 
   @override
   Widget build(BuildContext context) {
     final habitProvider = Provider.of<HabitProvider>(context);
 
-    // Map to hold marking options
     final Map<String, Icon?> markingOptions = {
       'Red Flag': const Icon(Icons.flag, color: Colors.red),
       'Blue Flag': const Icon(Icons.flag, color: Colors.blue),
@@ -29,34 +28,33 @@ class HabitTile extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
-        color: Colors.grey[850],
+        color: Colors.grey[900],
         borderRadius: BorderRadius.circular(12.0),
       ),
       child: Row(
         children: [
-          // Circular button to mark habit as complete
           GestureDetector(
             onTap: () {
-              habitProvider.toggleHabitCompletion(habit); // Toggle completion
+              habitProvider.toggleHabitCompletion(habit);
             },
             child: Container(
-              width: 24,
-              height: 24,
+              width: 20,
+              height: 20,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(color: Colors.white, width: 2),
+                color: habit.isCompleted ? Colors.green : Colors.transparent,
               ),
               child: habit.isCompleted
                   ? const Icon(
                 Icons.check,
-                color: Colors.green,
-                size: 16,
+                color: Colors.white,
+                size: 14,
               )
                   : null,
             ),
           ),
           const SizedBox(width: 16),
-          // Habit title, date, and time
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,7 +69,7 @@ class HabitTile extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  habit.scheduleDateTime(context), // Display scheduled date and time
+                  habit.scheduleDateTime(context),
                   style: TextStyle(
                     color: Colors.grey[400],
                     fontSize: 14,
@@ -80,17 +78,16 @@ class HabitTile extends StatelessWidget {
               ],
             ),
           ),
-          // Enable Reminder Button
+
           IconButton(
             icon: const Icon(Icons.notifications, color: Colors.grey),
             onPressed: () {
-              // Handle enabling reminder
-              // (You can add your own logic to manage reminders)
+              //to add notifications
             },
           ),
-          // Mark with Symbol button
           PopupMenuButton<String>(
             icon: habit.symbol ?? const Icon(Icons.flag_outlined, color: Colors.grey),
+            color: Colors.grey[850], // Background color of the PopupMenu
             onSelected: (String value) {
               Icon? selectedIcon;
               if (value == 'Clear') {
@@ -98,8 +95,6 @@ class HabitTile extends StatelessWidget {
               } else {
                 selectedIcon = markingOptions[value];
               }
-
-              // Update the habit with the selected marking icon
               final updatedHabit = habit.copyWith(symbol: selectedIcon);
               habitProvider.updateHabit(updatedHabit);
             },
@@ -111,7 +106,7 @@ class HabitTile extends StatelessWidget {
                     children: [
                       markingOptions[key]!,
                       const SizedBox(width: 8),
-                      Text(key),
+                      Text(key, style: const TextStyle(color: Colors.white)), // Item text color
                     ],
                   ),
                 );

@@ -16,12 +16,12 @@ class AddEditHabitScreen extends StatefulWidget {
 class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
-  final _uuid = const Uuid(); // Uuid instance for generating unique ids
+  final _uuid = const Uuid();
 
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
   String _repeatFrequency = 'None';
-  String _selectedCategory = 'No category'; // New field for category
+  String _selectedCategory = 'No category';
 
   @override
   void initState() {
@@ -38,7 +38,7 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
 
   void _saveHabit() {
     if (_titleController.text.isEmpty || _descriptionController.text.isEmpty) {
-      // Show an error message if fields are empty
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please enter a title and description')),
       );
@@ -46,21 +46,21 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
     }
 
     final newHabit = Habit(
-      id: widget.habit?.id ?? _uuid.v4(), // Use existing id if editing, otherwise generate a new one
+      id: widget.habit?.id ?? _uuid.v4(),
       title: _titleController.text,
       description: _descriptionController.text,
       completedDates: widget.habit?.completedDates ?? [],
       scheduledDate: _selectedDate,
       reminderTime: _selectedTime,
       repeatFrequency: _repeatFrequency,
-      category: _selectedCategory, // Include the selected category
+      category: _selectedCategory,
     );
 
     final habitProvider = Provider.of<HabitProvider>(context, listen: false);
     if (widget.habit == null) {
-      habitProvider.addHabit(newHabit); // Add habit if it's a new one
+      habitProvider.addHabit(newHabit);
     } else {
-      habitProvider.updateHabit(newHabit); // Update habit if editing
+      habitProvider.updateHabit(newHabit);
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -99,41 +99,60 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.habit == null ? 'Add Habit' : 'Edit Habit'),
+        backgroundColor: Colors.black,
+        title: Text(widget.habit == null ? 'Add Habit' : 'Edit Habit' , style: const TextStyle(color: Colors.white),),
       ),
-      body: Padding(
+      body: Container(
+        color: Colors.grey[900],
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             TextField(
               controller: _titleController,
-              decoration: const InputDecoration(labelText: 'Title'),
+              decoration: const InputDecoration(
+                labelText: 'Title',
+                labelStyle: TextStyle(color: Colors.white),
+                border: OutlineInputBorder(),
+              ),
+              style: const TextStyle(color: Colors.white),
             ),
+            const SizedBox(height: 16.0),
             TextField(
               controller: _descriptionController,
-              decoration: const InputDecoration(labelText: 'Description'),
+              decoration: const InputDecoration(
+                labelText: 'Description',
+                labelStyle: TextStyle(color: Colors.white),
+                border: OutlineInputBorder(),
+              ),
+              style: const TextStyle(color: Colors.white),
             ),
             const SizedBox(height: 20),
             ListTile(
+              tileColor: Colors.black,
+              textColor: Colors.white,
               title: Text(
                 _selectedDate == null
                     ? 'No date chosen'
-                    : 'Date: ${_selectedDate!.toLocal()}'.split(' ')[0],
+                    :  'Date: ${_formatDate(_selectedDate!)}',
               ),
-              trailing: Icon(Icons.calendar_today),
+              trailing: const Icon(Icons.calendar_today),
               onTap: () => _selectDate(context),
             ),
             ListTile(
+              tileColor: Colors.black,
+              textColor: Colors.white,
               title: Text(
                 _selectedTime == null
                     ? 'No time chosen'
                     : 'Time: ${_selectedTime!.format(context)}',
               ),
-              trailing: Icon(Icons.access_time),
+              trailing: const Icon(Icons.access_time),
               onTap: () => _selectTime(context),
             ),
             ListTile(
+              tileColor: Colors.black,
+              textColor: Colors.white,
               title: const Text('Repeat'),
               trailing: DropdownButton<String>(
                 value: _repeatFrequency,
@@ -142,6 +161,8 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
                     _repeatFrequency = newValue!;
                   });
                 },
+                dropdownColor: Colors.grey[800],
+                style: const TextStyle(color: Colors.white),
                 items: <String>['None', 'Daily', 'Weekly', 'Monthly']
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
@@ -152,6 +173,8 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
               ),
             ),
             ListTile(
+              tileColor: Colors.black,
+              textColor: Colors.white,
               title: const Text('Category'),
               trailing: DropdownButton<String>(
                 value: _selectedCategory,
@@ -160,6 +183,8 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
                     _selectedCategory = newValue!;
                   });
                 },
+                dropdownColor: Colors.grey[800],
+                style: const TextStyle(color: Colors.white),
                 items: <String>[
                   'Work',
                   'Personal',
@@ -178,11 +203,19 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _saveHabit,
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white, backgroundColor: Colors.blueAccent,
+              ),
               child: Text(widget.habit == null ? 'Add Habit' : 'Save Habit'),
             ),
           ],
         ),
       ),
     );
+  }
+
+  String _formatDate(DateTime date) {
+    final formattedDate = "${date.month.toString().padLeft(2, '0')}/${date.day.toString().padLeft(2, '0')}/${date.year}";
+    return formattedDate;
   }
 }
