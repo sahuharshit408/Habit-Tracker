@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:table_calendar/table_calendar.dart';
+import 'package:table_calendar/table_calendar.dart' as table_calendar; // Prefixing the table_calendar import
 import '../providers/habit_provider.dart';
+import '../models/habit.dart';
 import '../widgets/progress_chart.dart';
+import '../widgets/custom_calendar.dart' as custom_calendar; // Prefixing the custom_calendar import
 
 class ProgressOverviewScreen extends StatefulWidget {
   const ProgressOverviewScreen({super.key});
@@ -19,61 +21,55 @@ class _ProgressOverviewScreenState extends State<ProgressOverviewScreen> {
   Widget build(BuildContext context) {
     final habitProvider = Provider.of<HabitProvider>(context);
 
+    // Filter habits based on the selected day
+    List<Habit> habitsForSelectedDay = habitProvider.habits
+        .where((habit) => habit.scheduledDate != null && table_calendar.isSameDay(habit.scheduledDate!, _selectedDay))
+        .toList();
+
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TableCalendar(
-              focusedDay: _focusedDay,
-              firstDay: DateTime.utc(2020, 1, 1),
-              lastDay: DateTime.utc(2030, 12, 31),
-              calendarFormat: CalendarFormat.month,
-              selectedDayPredicate: (day) {
-                return isSameDay(_selectedDay, day);
-              },
-              onDaySelected: (selectedDay, focusedDay) {
-                setState(() {
-                  _selectedDay = selectedDay;
-                  _focusedDay = focusedDay;
-                  // Add logic to display the contents for the selected date
-                });
-              },
-              calendarStyle: CalendarStyle(
-                selectedDecoration: BoxDecoration(
-                  color: Colors.blueAccent,
-                  shape: BoxShape.circle,
-                ),
-                todayDecoration: BoxDecoration(
-                  color: Colors.orangeAccent,
-                  shape: BoxShape.circle,
-                ),
-                outsideDaysVisible: false,
-                weekendTextStyle: TextStyle(color: Colors.red),
-                defaultTextStyle: TextStyle(color: Colors.black),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              custom_calendar.CustomCalendar(
+                habits: habitProvider.habits,
+                onDaySelected: (selectedDay, focusedDay) {
+                  setState(() {
+                    _selectedDay = selectedDay;
+                    _focusedDay = focusedDay;
+                  });
+                },
+                selectedDayPredicate: (day) {
+                  return table_calendar.isSameDay(_selectedDay, day);
+                },
               ),
-              headerStyle: HeaderStyle(
-                formatButtonVisible: false,
-                titleCentered: true,
-                titleTextStyle: TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-                leftChevronIcon: Icon(Icons.chevron_left, color: Colors.black),
-                rightChevronIcon: Icon(Icons.chevron_right, color: Colors.black),
+              const SizedBox(height: 20.0),
+              habitsForSelectedDay.isEmpty
+                  ? const Center(
+                child: Text('No habits scheduled for this day!'),
+              )
+                  : ListView.builder(
+                physics: const NeverScrollableScrollPhysics(), // Disable scrolling of ListView
+                shrinkWrap: true, // Make ListView take only the necessary space
+                itemCount: habitsForSelectedDay.length,
+                itemBuilder: (context, index) {
+                  final habit = habitsForSelectedDay[index];
+                  return ListTile(
+                    title: Text(habit.title),
+                    subtitle: Text(habit.description),
+                    trailing: habit.isCompleted
+                        ? const Icon(Icons.check_circle,
+                        color: Colors.green)
+                        : const Icon(Icons.radio_button_unchecked,
+                        color: Colors.grey),
+                  );
+                },
               ),
-            ),
-            const SizedBox(height: 20.0),
-            habitProvider.habits.isEmpty
-                ? const Center(
-              child: Text('No habits to show progress for!'),
-            )
-                : Expanded(
-              child: ProgressChart(habits: habitProvider.habits),
-            ),
-            // You can add content display for the selected day here
-          ],
+              const SizedBox(height: 20.0),
+              ProgressChart(habits: habitProvider.habits),
+            ],
+          ),
         ),
       ),
     );

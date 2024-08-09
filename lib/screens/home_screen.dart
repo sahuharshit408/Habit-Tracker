@@ -34,7 +34,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _signOut() async {
     await FirebaseAuth.instance.signOut();
-    Navigator.pushReplacementNamed(context, '/login');
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Navigator.pushReplacementNamed(context, '/login');
+    });
   }
 
   @override

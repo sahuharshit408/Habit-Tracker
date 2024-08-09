@@ -13,29 +13,16 @@ class HabitProvider with ChangeNotifier {
     _initializeUser();
   }
 
-  List<Habit> get habits => _habits; // Getter for habits
-
-  // Initialize user and fetch habits
   void _initializeUser() {
     _user = FirebaseAuth.instance.currentUser;
     if (_user != null) {
       _fetchHabits();
     } else {
-      _habits.clear();
-      notifyListeners();
+      print('User is not logged in');
     }
-
-    // Listen for authentication state changes
-    FirebaseAuth.instance.authStateChanges().listen((User? user) {
-      _user = user;
-      if (_user != null) {
-        _fetchHabits();
-      } else {
-        _habits.clear();
-        notifyListeners();
-      }
-    });
   }
+
+  List<Habit> get habits => _habits; // Getter for habits
 
   // Method to fetch habits from Firestore
   Future<void> _fetchHabits() async {
@@ -120,27 +107,7 @@ class HabitProvider with ChangeNotifier {
 
   // Method to toggle habit completion
   Future<void> toggleHabitCompletion(Habit habit) async {
-    if (_user == null) return;
-
     habit.toggleCompletion();
     await updateHabit(habit); // Update the habit in the list
-  }
-
-  // Handle sign-out
-  Future<void> signOut() async {
-    try {
-      await FirebaseAuth.instance.signOut();
-      _user = null;
-      _habits.clear();
-      notifyListeners();
-    } catch (e) {
-      print('Error signing out: $e');
-    }
-  }
-
-  @override
-  void dispose() {
-    // Clean up any resources or listeners
-    super.dispose();
   }
 }

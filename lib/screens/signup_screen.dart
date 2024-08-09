@@ -62,7 +62,10 @@ class _SignupScreenState extends State<SignupScreen> {
               const SizedBox(height: 20),
               TextButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/login');
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    Navigator.pushNamed(context, '/login');
+                  });
+                  //Navigator.pushNamed(context, '/login');
                 },
                 child: const Text(
                   'Already have an account? Login',

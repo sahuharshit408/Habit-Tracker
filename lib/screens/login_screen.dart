@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 import '../providers/auth_provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -21,12 +22,10 @@ class _LoginScreenState extends State<LoginScreen> {
         email: _emailController.text,
         password: _passwordController.text,
       );
-      Navigator.pushReplacementNamed(context, '/home'); // Redirect to HomeScreen
+      Get.offNamed('/home'); // Navigate to HomeScreen
     } catch (e) {
       // Handle authentication errors here (e.g., show an error message)
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Login failed: ${e.toString()}')),
-      );
+      Get.snackbar('Login failed', e.toString(), snackPosition: SnackPosition.BOTTOM);
     }
   }
 
@@ -54,9 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
               _buildTextField(_passwordController, 'Password', Icons.lock, obscureText: true),
               const SizedBox(height: 10),
               TextButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/forgot-password');
-                },
+                onPressed: () => Get.toNamed('/forgot-password'),
                 child: const Text(
                   'Forgot Password?',
                   style: TextStyle(color: Colors.white),
@@ -64,9 +61,10 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: (() => signIn()),
+                onPressed: () => signIn(),
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.blueAccent, backgroundColor: Colors.white,
+                  foregroundColor: Colors.blueAccent,
+                  backgroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 12.0),
                   textStyle: const TextStyle(fontSize: 18.0),
                 ),
@@ -74,9 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 20),
               TextButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/signup');
-                },
+                onPressed: () => Get.toNamed('/signup'),
                 child: const Text(
                   'Don\'t have an account? Sign up',
                   style: TextStyle(color: Colors.white),
