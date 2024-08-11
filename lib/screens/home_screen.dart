@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:habit_tracker/screens/habit_management_screen.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'progress_overview_screen.dart';
 import 'statistics_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -71,61 +72,41 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           ),
         ],
       ),
-      body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 300),
-        transitionBuilder: (Widget child, Animation<double> animation) {
-          return FadeTransition(
-            opacity: animation,
-            child: child,
-          );
-        },
-        child: _pages[_selectedIndex],
+      body: Padding(
+        padding: const EdgeInsets.only(bottom: 18.0),
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300), // Increase the duration for smoother transitions
+          transitionBuilder: (Widget child, Animation<double> animation) {
+            // Combining fade and slide transitions for smooth effect
+            return FadeTransition(
+              opacity: animation,
+              child: SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(0.0, 0.05), // Slide from slightly below
+                  end: Offset.zero, // End at the center
+                ).animate(animation),
+                child: child,
+              ),
+            );
+          },
+          child: _pages[_selectedIndex],
+        ),
       ),
       backgroundColor: const Color(0xFF2E2E2E),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.black,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.3),
-              spreadRadius: 5,
-              blurRadius: 10,
-            ),
-          ],
-        ),
-        child: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.checklist_outlined, size: 30),
-              label: 'Habits',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_today_outlined, size: 30),
-              label: 'Progress',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.bar_chart, size: 30),
-              label: 'Stats',
-            ),
-          ],
-          currentIndex: _selectedIndex,
-          selectedItemColor: Colors.blueAccent,
-          unselectedItemColor: Colors.grey,
-          onTap: _onItemTapped,
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          selectedLabelStyle: GoogleFonts.poppins(
-            textStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-          ),
-          unselectedLabelStyle: GoogleFonts.poppins(
-            textStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
-          ),
-        ),
+      bottomNavigationBar: CurvedNavigationBar(
+        backgroundColor: const Color(0xFF2E2E2E),
+        color: Colors.black,
+        buttonBackgroundColor: Colors.blueAccent,
+        height: 60,
+        animationDuration: const Duration(milliseconds: 500), // Increase the duration for smoother animation
+        animationCurve: Curves.easeInOut, // Add smooth curve to animation
+        items: const <Widget>[
+          Icon(Icons.checklist_outlined, size: 30, color: Colors.white),
+          Icon(Icons.calendar_today_outlined, size: 30, color: Colors.white),
+          Icon(Icons.bar_chart, size: 30, color: Colors.white),
+        ],
+        index: _selectedIndex,
+        onTap: _onItemTapped,
       ),
     );
   }
